@@ -19,6 +19,9 @@ class ViewController: UITableViewController {
         title = "Storm Viewer"
         navigationController?.navigationBar.prefersLargeTitles = true
         
+        // ***CHALLENGE 2 from PROJECT 3***: add a bar button to the main VC that recommends the app to other people
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareApp))
+        
         let fm = FileManager.default
         let path = Bundle.main.resourcePath!
         let items = try! fm.contentsOfDirectory(atPath: path)
@@ -27,7 +30,7 @@ class ViewController: UITableViewController {
         for item in items {
             if item.hasPrefix("nssl") {
                 pictures.append(item) // Append to the array.
-                // Challenge 2: sort pictures
+                // ***CHALLENGE 2***: sort pictures
                 pictures.sort()
             }
         }
@@ -52,15 +55,29 @@ class ViewController: UITableViewController {
             vc.selectedImage = pictures[indexPath.row]
             navigationController?.pushViewController(vc, animated: true)
             
-            // Challenge 3: send array position + total number of pictures to DetailViewController
+            // ***CHALLENGE 3***: send array position + total number of pictures to DetailViewController
             vc.selectedPictureNumber = indexPath.row + 1 // +1 is to compensate array index starting at 0
             vc.totalPictures = pictures.count
         }
     }
     
+    // ***CHALLENGE 2 from PROJECT 3***: add a bar button to the main VC that recommends the app to other people
+    @objc func shareApp() {
+        if let URL = URL(string: "https://itunes.apple.com/us/app/myapp/idxxxxxxxx?ls=1&mt=8"), !URL.absoluteString.isEmpty {
+        let objectsToShare = [URL]
+        let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+            
+            self.present(activityVC, animated: true, completion: nil)
+        } else {
+           missingApp()
+        }
+    }
     
-    
-    
+    func missingApp() {
+        let noApp = UIAlertController(title: "Attention!", message: "The app is not available yet!.", preferredStyle: .alert)
+        present(noApp, animated: true)
+    }
+
     
 }
 
